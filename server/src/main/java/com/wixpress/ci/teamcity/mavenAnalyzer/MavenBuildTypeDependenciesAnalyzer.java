@@ -105,7 +105,7 @@ public class MavenBuildTypeDependenciesAnalyzer implements DependenciesAnalyzer<
     private Map<String, String> getBuildVcsRevisions(SBuildType buildType) throws VcsException {
         Map<String, String> vcsToVersion = newHashMap();
         for (VcsRootInstance instance: buildType.getVcsRootInstances())
-            vcsToVersion.put(instance.getName(), instance.getCurrentRevision());
+            vcsToVersion.put(instance.getName(), instance.getCurrentRevision().getDisplayVersion());
         return vcsToVersion;
     }
 

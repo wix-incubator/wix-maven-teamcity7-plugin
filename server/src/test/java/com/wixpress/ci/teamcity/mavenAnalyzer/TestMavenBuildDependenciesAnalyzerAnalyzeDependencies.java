@@ -7,6 +7,7 @@ import com.wixpress.ci.teamcity.maven.MavenBooter;
 import com.wixpress.ci.teamcity.maven.MavenProjectDependenciesAnalyzer;
 import com.wixpress.ci.teamcity.mavenAnalyzer.dao.ModuleDependenciesStorage;
 import com.wixpress.ci.teamcity.mavenAnalyzer.dao.DependenciesDao;
+import jetbrains.buildServer.serverSide.RepositoryVersion;
 import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.vcs.VcsException;
 import jetbrains.buildServer.vcs.VcsRootInstance;
@@ -56,7 +57,7 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.2");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.2", "1.2"));
 
         MavenDependenciesResult result = analyzer.analyzeDependencies(buildType);
 
@@ -70,21 +71,21 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.3");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.3", "1.3"));
 
         MavenDependenciesResult result = analyzer.analyzeDependencies(buildType);
 
         assertThat(result.getResultType(), is(ResultType.runningAsync));
         verify(executor).execute(Matchers.<CollectDependenciesRunner>any());
     }
-    
+
     @Test
     public void getBuildDependenciesCurrent() throws IOException, VcsException {
         when(executor.getRunner(buildType)).thenReturn(null);
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.2");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.2", "1.2"));
 
         MavenDependenciesResult result = analyzer.getBuildDependencies(buildType, true);
 
@@ -98,7 +99,7 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.3");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.3", "1.3"));
 
         MavenDependenciesResult result = analyzer.getBuildDependencies(buildType, true);
 
@@ -112,7 +113,7 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.3");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.3", "1.3"));
 
         MavenDependenciesResult result = analyzer.getBuildDependencies(buildType, false);
 
@@ -131,7 +132,7 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         verify(executor, never()).execute(Matchers.<CollectDependenciesRunner>any());
         verify(buildType, never()).getCustomDataStorage(anyString());
     }
-    
+
     @Test
     public void analyzeDependenciesRunningCompleted() throws IOException, VcsException {
         when(executor.getRunner(buildType)).thenReturn(runner);
@@ -139,7 +140,7 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
         when(dependenciesDao.loadModuleDependencies(buildType)).thenReturn(serializedDefaultModuleStorage());
         when(buildType.getVcsRootInstances()).thenReturn(ImmutableList.of(vcsRootInstance));
         when(vcsRootInstance.getName()).thenReturn("vcs1");
-        when(vcsRootInstance.getCurrentRevision()).thenReturn("1.2");
+        when(vcsRootInstance.getCurrentRevision()).thenReturn(new RepositoryVersion("1.2", "1.2"));
 
         MavenDependenciesResult result = analyzer.analyzeDependencies(buildType);
 
@@ -170,14 +171,14 @@ public class TestMavenBuildDependenciesAnalyzerAnalyzeDependencies {
 
         verify(executor).execute(Matchers.<CollectDependenciesRunner>any());
     }
-    
+
     @Test
     public void getProgressRunning() {
         when(buildType.getBuildTypeId()).thenReturn("id32");
         when(executor.getRunner(buildType.getBuildTypeId())).thenReturn(runner);
         CollectProgress collectProgress = mock(CollectProgress.class);
         when(runner.getProgress(0, "id32")).thenReturn(collectProgress);
-        
+
         CollectProgress collectProgressRes = analyzer.getProgress(buildType.getBuildTypeId(), 0);
         assertThat(collectProgressRes, sameInstance(collectProgress));
     }

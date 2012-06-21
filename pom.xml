@@ -10,7 +10,7 @@
     <name>teamcity maven dependencies plugin</name>
 
     <properties>
-        <teamcity.version>6.5.5</teamcity.version>
+        <teamcity.version>7.0.3</teamcity.version>
         <finalZipName>maven-dependencies-${project.version}</finalZipName>
         <teamcity.data.path>${user.home}/.BuildServer</teamcity.data.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
